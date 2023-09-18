@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-k8s
+spec:
+  selector:
+    matchLabels:
+      app: app-k8s
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: app-k8s
+    spec:
+      containers:
+        - name: app-k8s
+          image: app-k8s:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: mysql
+            - name: DB_NAME
+              value: restaurant
+            - name: DB_USERNAME
+              value: root
+            - name: DB_PASSWORD
+              value: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-k8s
+spec:
+  selector:
+    app: app-k8s
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: NodePort
